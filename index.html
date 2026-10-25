@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TalentFlow - Enterprise IT Staffing & Talent Solutions</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'], display: ['"Playfair Display"', 'Georgia', 'serif'] },
+          colors: {
+            obsidian: '#090A0F',        // page background (deep charcoal)
+            charcoal: '#131622',       // sections / inputs
+            surface: '#1A1E2E',    // cards
+            surfaceLight: '#23283E',
+            electricCyan: '#00E5FF',       // primary accent
+            royalPurple: '#8B5CF6',   // secondary accent
+            mutedSilver: '#A3B1C6',       // body text (high contrast on charcoal)
+          },
+          backgroundImage: {
+            'grand-gradient': 'linear-gradient(135deg, #00E5FF 0%, #8B5CF6 100%)',
+            'glow-radial': 'radial-gradient(circle at 50% 0%, rgba(0,229,255,0.14) 0%, rgba(139,92,246,0.06) 50%, transparent 80%)',
+          },
+          boxShadow: {
+            'cyan-glow': '0 6px 24px -6px rgba(0,229,255,0.45)',
+            'soft': '0 10px 30px -12px rgba(0,0,0,0.5)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body { background-color: #090A0F; color: #FFFFFF; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
+
+    .glass-card {
+      background: rgba(19,22,34, 0.85);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+    }
+    .glass-card-hover { transition: all 0.25s ease; }
+    .glass-card-hover:hover {
+      background: rgba(26,30,46, 0.9);
+      border-color: rgba(0,229,255, 0.45);
+      box-shadow: 0 12px 30px -12px rgba(0,229,255, 0.25);
+      transform: translateY(-3px);
+    }
+
+    .text-gradient {
+      background: linear-gradient(135deg, #FFFFFF 0%, #00E5FF 55%, #8B5CF6 100%);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Clear keyboard focus for easy use */
+    a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 2px solid #00E5FF; outline-offset: 2px;
+    }
+
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #090A0F; }
+    ::-webkit-scrollbar-thumb { background: #23283E; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #00E5FF; }
+
+    /* ===== GRAND LOOK ===== */
+    body {
+      background-image:
+        linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
+      background-size: 64px 64px;
+    }
+    h1, h2 { font-family: "Playfair Display", Georgia, serif; letter-spacing: -0.015em; }
+    h1 { text-shadow: 0 0 60px rgba(0,229,255,0.12); }
+
+    header::after {
+      content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
+      background: linear-gradient(90deg, transparent, #00E5FF, #8B5CF6, transparent); opacity: .7;
+    }
+
+    .glass-card:not(.fixed) { position: relative; }
+    .glass-card::before {
+      content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px;
+      background: linear-gradient(135deg, rgba(0,229,255,.55), rgba(255,255,255,.05) 45%, rgba(139,92,246,.55));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      pointer-events: none; opacity: .65; transition: opacity .25s ease;
+    }
+    .glass-card-hover:hover::before { opacity: 1; }
+
+    .eyebrow::before, .eyebrow::after {
+      content: ""; display: inline-block; width: 28px; height: 1px; background: currentColor;
+      vertical-align: middle; opacity: .6;
+    }
+    .eyebrow::before { margin-right: 12px; }
+    .eyebrow::after { margin-left: 12px; }
+
+    .bg-grand-gradient { position: relative; overflow: hidden; }
+    button.bg-grand-gradient::after, a.bg-grand-gradient::after {
+      content: ""; position: absolute; top: 0; left: -120%; width: 60%; height: 100%;
+      background: linear-gradient(100deg, transparent, rgba(255,255,255,.35), transparent);
+      transform: skewX(-20deg); transition: left .6s ease; pointer-events: none;
+    }
+    button.bg-grand-gradient:hover::after, a.bg-grand-gradient:hover::after { left: 140%; }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-electricCyan selection:text-obsidian text-base">
+
+  <!-- Ambient Background -->
+  <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[450px] bg-glow-radial pointer-events-none z-0"></div>
+  <div class="fixed top-1/3 -right-60 w-[500px] h-[500px] bg-purple-900/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
+  <div class="fixed bottom-10 -left-60 w-[500px] h-[500px] bg-cyan-900/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
+
+  <!-- HEADER -->
+  <header class="sticky top-0 z-40 border-b border-white/10 bg-obsidian/90 backdrop-blur-xl">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-xl bg-grand-gradient p-[1px] flex items-center justify-center shadow-cyan-glow group-hover:scale-105 transition-transform duration-300">
+          <div class="w-full h-full bg-obsidian rounded-[11px] flex items-center justify-center">
+            <i class="fa-solid fa-layer-group text-electricCyan text-lg"></i>
+          </div>
+        </div>
+        <div>
+          <span class="text-xl font-extrabold tracking-tight text-white">Talent<span class="text-electricCyan">Flow</span></span>
+          <span class="block text-[10px] font-semibold uppercase tracking-widest text-mutedSilver">Enterprise IT Solutions</span>
+        </div>
+      </a>
+
+      <nav class="hidden md:flex items-center space-x-8 text-sm font-medium">
+        <a href="#services" class="text-mutedSilver hover:text-electricCyan transition-colors">Solutions</a>
+        <a href="#jobs" class="text-mutedSilver hover:text-electricCyan transition-colors">Explore Jobs</a>
+        <a href="#metrics" class="text-mutedSilver hover:text-electricCyan transition-colors">Impact</a>
+        <a href="#locations" class="text-mutedSilver hover:text-electricCyan transition-colors">Global Offices</a>
+      </nav>
+
+      <div class="hidden lg:flex items-center space-x-4">
+        <div class="bg-charcoal p-1 rounded-full border border-white/10 flex items-center text-xs font-semibold">
+          <button id="modeEmployer" onclick="toggleAudienceMode('employer')" class="px-3 py-1.5 rounded-full bg-grand-gradient text-obsidian font-bold transition-all">For Enterprise</button>
+          <button id="modeCandidate" onclick="toggleAudienceMode('candidate')" class="px-3 py-1.5 rounded-full text-mutedSilver hover:text-white transition-all">For Tech Talent</button>
+        </div>
+        <button onclick="openHiringModal()" class="px-5 py-2.5 rounded-full bg-grand-gradient text-obsidian font-bold text-sm shadow-cyan-glow hover:scale-105 transition-all">Request Talent</button>
+      </div>
+
+      <button onclick="toggleMobileMenu()" aria-label="Open menu" class="md:hidden text-mutedSilver hover:text-white p-2">
+        <i class="fa-solid fa-bars-staggered text-xl"></i>
+      </button>
+    </div>
+
+    <div id="mobileMenu" class="hidden md:hidden border-b border-white/10 bg-charcoal px-4 pt-4 pb-6 space-y-4">
+      <a href="#services" onclick="toggleMobileMenu()" class="block text-mutedSilver hover:text-electricCyan py-1">Solutions</a>
+      <a href="#jobs" onclick="toggleMobileMenu()" class="block text-mutedSilver hover:text-electricCyan py-1">Explore Jobs</a>
+      <a href="#metrics" onclick="toggleMobileMenu()" class="block text-mutedSilver hover:text-electricCyan py-1">Impact</a>
+      <a href="#locations" onclick="toggleMobileMenu()" class="block text-mutedSilver hover:text-electricCyan py-1">Global Offices</a>
+      <button onclick="openHiringModal(); toggleMobileMenu();" class="w-full py-3 rounded-full bg-grand-gradient text-obsidian font-bold text-sm">Request Talent</button>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="relative pt-12 pb-20 md:pt-20 md:pb-28 overflow-hidden z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-12 gap-12 items-center">
+
+        <div class="lg:col-span-7 space-y-8 text-center lg:text-left">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-electricCyan/30 bg-electricCyan/10 text-electricCyan text-xs font-semibold uppercase tracking-wider">
+            <span class="w-2 h-2 rounded-full bg-electricCyan"></span>
+            <span id="heroBadge">Enterprise Staffing & Digital Execution</span>
+          </div>
+
+          <h1 id="heroHeading" class="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.08]">
+            Architecting <span class="text-gradient">Next-Gen IT Teams</span> for Global Enterprises
+          </h1>
+
+          <p id="heroSubtext" class="text-lg sm:text-xl text-mutedSilver max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+            We deliver elite software engineers, AI architects, and cybersecurity specialists across contract, direct-hire, and managed service models with speed and precision.
+          </p>
+
+          <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+            <button onclick="openHiringModal()" class="w-full sm:w-auto px-8 py-4 rounded-full bg-grand-gradient text-obsidian font-bold text-base shadow-cyan-glow hover:scale-105 transition-all flex items-center justify-center gap-3">
+              <span>Hire Top IT Talent</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+            <a href="#jobs" class="w-full sm:w-auto px-8 py-4 rounded-full glass-card hover:border-electricCyan/50 text-white font-semibold text-base transition-all flex items-center justify-center gap-2">
+              <i class="fa-solid fa-briefcase text-electricCyan"></i>
+              <span>Browse Open Positions</span>
+            </a>
+          </div>
+
+          <div class="pt-6 border-t border-white/10 grid grid-cols-3 gap-4 text-center lg:text-left">
+            <div>
+              <div class="text-2xl font-bold text-white">48 Hrs</div>
+              <div class="text-sm text-mutedSilver">Avg. Talent Match</div>
+            </div>
+            <div>
+              <div class="text-2xl font-bold text-electricCyan">98.4%</div>
+              <div class="text-sm text-mutedSilver">Client Retention</div>
+            </div>
+            <div>
+              <div class="text-2xl font-bold text-royalPurple">15,000+</div>
+              <div class="text-sm text-mutedSilver">Engineers Placed</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5">
+          <div class="relative">
+            <div class="absolute -inset-1 bg-grand-gradient rounded-3xl blur-xl opacity-20"></div>
+
+            <div class="relative glass-card rounded-3xl p-6 sm:p-8 space-y-6 shadow-soft">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold uppercase tracking-wider text-electricCyan">Live Deployment Console</span>
+                <span class="inline-flex items-center gap-1.5 text-xs text-emerald-300 bg-emerald-400/10 px-2.5 py-1 rounded-full border border-emerald-400/25">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Active Matching
+                </span>
+              </div>
+
+              <div id="talentSpotlight" class="bg-charcoal rounded-2xl p-5 border border-white/10 space-y-4">
+                <div class="flex items-center gap-4">
+                  <div class="w-14 h-14 rounded-2xl bg-surfaceLight border border-electricCyan/30 flex items-center justify-center text-2xl text-electricCyan">
+                    <i class="fa-solid fa-user-gear"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-white text-lg">Senior Cloud Architect</h3>
+                    <p class="text-sm text-mutedSilver">AWS / Kubernetes / Terraform • 10+ Yrs Exp</p>
+                  </div>
+                </div>
+                <div class="flex flex-wrap gap-2 text-xs">
+                  <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-mutedSilver">Clearance: TS/SCI</span>
+                  <span class="px-2.5 py-1 rounded-lg bg-electricCyan/10 border border-electricCyan/25 text-electricCyan">Vetted Candidate</span>
+                  <span class="px-2.5 py-1 rounded-lg bg-royalPurple/10 border border-royalPurple/25 text-royalPurple">Immediate Availability</span>
+                </div>
+              </div>
+
+              <div class="space-y-3">
+                <label class="block text-xs font-semibold text-mutedSilver uppercase tracking-wider">Specify Your Hiring Need</label>
+                <div class="grid grid-cols-2 gap-2">
+                  <button onclick="setSkillFilter('Cloud')" class="p-3 rounded-xl bg-surfaceLight/60 hover:border-electricCyan/50 border border-white/10 text-left text-sm font-medium text-white transition-all">☁️ Cloud & DevOps</button>
+                  <button onclick="setSkillFilter('AI')" class="p-3 rounded-xl bg-surfaceLight/60 hover:border-electricCyan/50 border border-white/10 text-left text-sm font-medium text-white transition-all">🤖 AI & Machine Learning</button>
+                  <button onclick="setSkillFilter('Full Stack')" class="p-3 rounded-xl bg-surfaceLight/60 hover:border-electricCyan/50 border border-white/10 text-left text-sm font-medium text-white transition-all">⚡ Full Stack Software</button>
+                  <button onclick="setSkillFilter('Cyber')" class="p-3 rounded-xl bg-surfaceLight/60 hover:border-electricCyan/50 border border-white/10 text-left text-sm font-medium text-white transition-all">🛡️ Cybersecurity & SecOps</button>
+                </div>
+              </div>
+
+              <button onclick="openHiringModal()" class="w-full py-3.5 rounded-xl bg-white/10 hover:bg-electricCyan hover:text-obsidian text-white font-bold text-sm border border-white/10 transition-all">
+                Match With Verified Candidates &rarr;
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SOLUTIONS -->
+  <section id="services" class="py-24 relative z-10 border-t border-white/10 bg-charcoal/60">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+
+      <div class="text-center max-w-3xl mx-auto space-y-4">
+        <span class="eyebrow text-xs font-bold uppercase tracking-[0.28em] text-electricCyan">Workforce Delivery Models</span>
+        <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight">Tailored Engagement Solutions for Fortune 500 & High-Growth Tech</h2>
+        <p class="text-mutedSilver">From rapid contract augmentation to end-to-end managed engineering teams, we scale your capabilities smoothly.</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8">
+
+        <div class="glass-card glass-card-hover rounded-3xl p-8 space-y-6 flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="w-14 h-14 rounded-2xl bg-electricCyan/10 border border-electricCyan/30 flex items-center justify-center text-electricCyan text-2xl"><i class="fa-solid fa-user-plus"></i></div>
+            <h3 class="text-xl font-bold text-white">IT Staff Augmentation</h3>
+            <p class="text-sm text-mutedSilver leading-relaxed">Inject specialized technical skill sets into your existing teams immediately. Scale up or down effortlessly to hit project deadlines.</p>
+            <ul class="space-y-2 text-sm text-mutedSilver pt-2">
+              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-electricCyan"></i> 48-Hour Talent Submission</li>
+              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-electricCyan"></i> Rigorous Technical Vetting</li>
+              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-electricCyan"></i> Flexible Duration Options</li>
+            </ul>
+          </div>
+          <button onclick="openHiringModal('Augmentation')" class="text-sm font-bold text-electricCyan hover:text-white transition-colors flex items-center gap-2">Explore Augmentation &rarr;</button>
+        </div>
+
+        <div class="glass-card glass-card-hover rounded-3xl p-8 space-y-6 flex flex-col justify-between relative border-electricCyan/40">
+          <div class="absolute -top-3 right-6 px-3 py-1 rounded-full bg-grand-gradient text-obsidian text-[10px] font-extrabold tracking-wider uppercase">Most Requested</div>
+          <div class="space-y-4">
+            <div class="w-14 h-14 rounded-2xl bg-royalPurple/10 border border-royalPurple/30 flex items-center justify-center text-royalPurple text-2xl"><i class="fa-solid fa-people-group"></i></div>
+            <h3 class="text-xl font-bold text-white">Direct-Hire & Executive Search</h3>
+            <p class="text-sm text-mutedSilver leading-relaxed">Secure permanent technology leaders, principal engineers, and specialized tech directors aligned with your corporate culture.</p>
+            <ul class="space-y-2 text-sm text-mutedSilver pt-2">
+              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-royalPurple"></i> Executive Assessment Battery</li>
+              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-royalPurple"></i> 90-Day Placement Guarantee</li>
+              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-royalPurple"></i> Exclusive Global Pipeline</li>
+            </ul>
+          </div>
+          <button onclick="openHiringModal('Direct Hire')" class="text-sm font-bold text-royalPurple hover:text-white transition-colors flex items-center gap-2">Explore Permanent Search &rarr;</button>
+        </div>
+
+        <div class="glass-card glass-card-hover rounded-3xl p-8 space-y-6 flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="w-14 h-14 rounded-2xl bg-electricCyan/10 border border-electricCyan/30 flex items-center justify-center text-electricCyan text-2xl"><i class="fa-solid fa-diagram-project"></i></div>
+            <h3 class="text-xl font-bold text-white">Managed Teams & Delivery</h3>
+            <p class="text-sm text-mutedSilver leading-relaxed">Hand off complete project pods or specialized engineering tracks. We manage deliverables, SLA compliance, and team leadership.</p>
+            <ul class="space-y-2 text-sm text-mutedSilver pt-2">
+              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-electricCyan"></i> End-to-End SLA Guarantees</li>
+              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-electricCyan"></i> Agile Project Managers</li>
+              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-electricCyan"></i> Predictable Billing Model</li>
+            </ul>
+          </div>
+          <button onclick="openHiringModal('Managed Delivery')" class="text-sm font-bold text-electricCyan hover:text-white transition-colors flex items-center gap-2">Explore Managed Delivery &rarr;</button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- JOBS -->
+  <section id="jobs" class="py-24 relative z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+          <span class="eyebrow text-xs font-bold uppercase tracking-[0.28em] text-electricCyan">Careers & Contracting</span>
+          <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight mt-1">Featured Enterprise IT Positions</h2>
+        </div>
+        <p class="text-sm text-mutedSilver max-w-md">Discover high-impact roles across Cloud, AI, Security, and Enterprise Software with tier-one clients worldwide.</p>
+      </div>
+
+      <div class="glass-card p-4 rounded-2xl flex flex-wrap gap-4 items-center justify-between">
+        <div class="relative flex-1 min-w-[240px]">
+          <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-mutedSilver text-sm"></i>
+          <input type="text" id="jobSearchInput" oninput="filterJobs()" placeholder="Search role title, keyword, or skill..." class="w-full bg-obsidian border border-white/15 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-mutedSilver focus:border-electricCyan">
+        </div>
+        <div class="flex flex-wrap items-center gap-3 text-sm">
+          <select id="roleCategoryFilter" onchange="filterJobs()" class="bg-obsidian border border-white/15 rounded-xl px-3 py-3 text-white focus:border-electricCyan">
+            <option value="All">All Categories</option>
+            <option value="Cloud & Infrastructure">Cloud & Infrastructure</option>
+            <option value="Data & AI">Data & AI</option>
+            <option value="Software Engineering">Software Engineering</option>
+            <option value="Cybersecurity">Cybersecurity</option>
+          </select>
+          <select id="engagementFilter" onchange="filterJobs()" class="bg-obsidian border border-white/15 rounded-xl px-3 py-3 text-white focus:border-electricCyan">
+            <option value="All">All Engagement Types</option>
+            <option value="Contract">Contract</option>
+            <option value="Full-Time">Full-Time Direct</option>
+            <option value="Remote">100% Remote</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="jobListingsGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </div>
+  </section>
+
+  <!-- METRICS -->
+  <section id="metrics" class="py-24 relative z-10 border-t border-white/10 bg-charcoal/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="glass-card rounded-3xl p-8 sm:p-12 relative overflow-hidden">
+        <div class="absolute -right-20 -top-20 w-80 h-80 bg-electricCyan/10 rounded-full blur-3xl"></div>
+
+        <div class="grid lg:grid-cols-12 gap-8 items-center relative">
+          <div class="lg:col-span-5 space-y-4">
+            <span class="eyebrow text-xs font-bold uppercase tracking-[0.28em] text-royalPurple">Quantifiable Outcomes</span>
+            <h2 class="text-3xl font-extrabold">Engineered for Operational Speed & Quality</h2>
+            <p class="text-sm text-mutedSilver leading-relaxed">We leverage an AI-matched global talent network to slash time-to-fill while maintaining strict quality benchmarks.</p>
+          </div>
+
+          <div class="lg:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
+            <div class="bg-obsidian/70 p-5 rounded-2xl border border-white/10">
+              <div class="text-3xl font-extrabold text-electricCyan">14 Days</div>
+              <div class="text-xs text-mutedSilver mt-1">Avg Direct Hire Search</div>
+            </div>
+            <div class="bg-obsidian/70 p-5 rounded-2xl border border-white/10">
+              <div class="text-3xl font-extrabold text-royalPurple">99.1%</div>
+              <div class="text-xs text-mutedSilver mt-1">SLA Compliance</div>
+            </div>
+            <div class="bg-obsidian/70 p-5 rounded-2xl border border-white/10">
+              <div class="text-3xl font-extrabold text-white">400+</div>
+              <div class="text-xs text-mutedSilver mt-1">Enterprise Clients</div>
+            </div>
+            <div class="bg-obsidian/70 p-5 rounded-2xl border border-white/10">
+              <div class="text-3xl font-extrabold text-electricCyan">45</div>
+              <div class="text-xs text-mutedSilver mt-1">Countries Supported</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOCATIONS -->
+  <section id="locations" class="py-24 relative z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+
+      <div class="text-center max-w-2xl mx-auto space-y-3">
+        <span class="eyebrow text-xs font-bold uppercase tracking-[0.28em] text-electricCyan">Global Footprint</span>
+        <h2 class="text-3xl font-extrabold">Strategically Positioned Innovation Hubs</h2>
+        <p class="text-sm text-mutedSilver">Deploy onshore, nearshore, or offshore talent teams seamlessly.</p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="glass-card glass-card-hover rounded-2xl p-6 space-y-3">
+          <div class="flex items-center justify-between text-electricCyan"><i class="fa-solid fa-building-columns text-xl"></i><span class="text-xs font-mono">HQ • NORTH AMERICA</span></div>
+          <h3 class="font-bold text-white text-lg">New York & Austin</h3>
+          <p class="text-sm text-mutedSilver">Executive Search, Enterprise Sales, Onshore Client Success & Strategy.</p>
+        </div>
+        <div class="glass-card glass-card-hover rounded-2xl p-6 space-y-3">
+          <div class="flex items-center justify-between text-royalPurple"><i class="fa-solid fa-globe text-xl"></i><span class="text-xs font-mono">EMEA REGION</span></div>
+          <h3 class="font-bold text-white text-lg">London & Amsterdam</h3>
+          <p class="text-sm text-mutedSilver">Fintech, Regulatory Compliance, and Cloud Security Delivery Hubs.</p>
+        </div>
+        <div class="glass-card glass-card-hover rounded-2xl p-6 space-y-3">
+          <div class="flex items-center justify-between text-electricCyan"><i class="fa-solid fa-laptop-code text-xl"></i><span class="text-xs font-mono">APAC TALENT HUB</span></div>
+          <h3 class="font-bold text-white text-lg">Bengaluru & Singapore</h3>
+          <p class="text-sm text-mutedSilver">Core Software Engineering, AI Research, and 24/7 Managed Cloud Support.</p>
+        </div>
+        <div class="glass-card glass-card-hover rounded-2xl p-6 space-y-3">
+          <div class="flex items-center justify-between text-royalPurple"><i class="fa-solid fa-network-wired text-xl"></i><span class="text-xs font-mono">LATAM NEARSHORE</span></div>
+          <h3 class="font-bold text-white text-lg">São Paulo & Mexico City</h3>
+          <p class="text-sm text-mutedSilver">Timezone-aligned Nearshore Agile Development & DevOps Talent.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-white/10 bg-obsidian py-12 relative z-10 text-sm text-mutedSilver">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6 border-b border-white/10 pb-8">
+        <a href="#" class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-grand-gradient p-[1px]">
+            <div class="w-full h-full bg-obsidian rounded-[7px] flex items-center justify-center"><i class="fa-solid fa-layer-group text-electricCyan text-xs"></i></div>
+          </div>
+          <span class="text-lg font-extrabold text-white">Talent<span class="text-electricCyan">Flow</span></span>
+        </a>
+        <div class="flex flex-wrap justify-center items-center gap-6">
+          <a href="#" class="hover:text-electricCyan transition-colors">Privacy Policy</a>
+          <a href="#" class="hover:text-electricCyan transition-colors">Terms of Engagement</a>
+          <a href="#" class="hover:text-electricCyan transition-colors">Security & Compliance</a>
+          <a href="#" class="hover:text-electricCyan transition-colors">Sitemap</a>
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p>&copy; 2026 TalentFlow Inc. All rights reserved.</p>
+        <div class="flex items-center space-x-4 text-lg">
+          <a href="#" aria-label="LinkedIn" class="hover:text-electricCyan"><i class="fa-brands fa-linkedin"></i></a>
+          <a href="#" aria-label="X" class="hover:text-electricCyan"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="#" aria-label="GitHub" class="hover:text-electricCyan"><i class="fa-brands fa-github"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- HIRING MODAL -->
+  <div id="hiringModal" class="fixed inset-0 z-50 hidden bg-obsidian/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="glass-card rounded-3xl w-full max-w-xl p-6 sm:p-8 space-y-6 border-electricCyan/30 relative max-h-[92vh] overflow-y-auto">
+      <button onclick="closeHiringModal()" aria-label="Close" class="absolute top-6 right-6 text-mutedSilver hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+
+      <div>
+        <span class="eyebrow text-xs font-bold uppercase tracking-[0.28em] text-electricCyan">Enterprise Inquiry</span>
+        <h3 class="text-2xl font-extrabold text-white mt-1">Request IT Staffing & Talent</h3>
+        <p class="text-sm text-mutedSilver">Fill out your hiring details to receive verified candidate profiles within 24–48 hours.</p>
+      </div>
+
+      <form id="hiringForm" onsubmit="submitHiringForm(event)" class="space-y-4">
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-mutedSilver mb-1">Your Full Name *</label>
+            <input type="text" required placeholder="Jane Doe" class="w-full bg-charcoal border border-white/15 rounded-xl px-4 py-3 text-sm text-white placeholder-mutedSilver/70 focus:border-electricCyan">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-mutedSilver mb-1">Corporate Email *</label>
+            <input type="email" required placeholder="jane@company.com" class="w-full bg-charcoal border border-white/15 rounded-xl px-4 py-3 text-sm text-white placeholder-mutedSilver/70 focus:border-electricCyan">
+          </div>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-mutedSilver mb-1">Engagement Model</label>
+            <select id="modalEngagementType" class="w-full bg-charcoal border border-white/15 rounded-xl px-3 py-3 text-sm text-white focus:border-electricCyan">
+              <option value="Augmentation">Staff Augmentation</option>
+              <option value="Direct Hire">Direct-Hire Search</option>
+              <option value="Managed Delivery">Managed Project Pod</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-mutedSilver mb-1">Positions Needed</label>
+            <select class="w-full bg-charcoal border border-white/15 rounded-xl px-3 py-3 text-sm text-white focus:border-electricCyan">
+              <option>1 - 3 Engineers</option>
+              <option>4 - 10 Engineers</option>
+              <option>10+ Enterprise Pod</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-mutedSilver mb-1">Required Tech Stack / Key Requirements</label>
+          <textarea rows="3" placeholder="e.g., AWS Cloud Architect with Kubernetes, Terraform & TS/SCI Clearance..." class="w-full bg-charcoal border border-white/15 rounded-xl p-3 text-sm text-white placeholder-mutedSilver/70 focus:border-electricCyan"></textarea>
+        </div>
+
+        <button type="submit" class="w-full py-3.5 rounded-xl bg-grand-gradient text-obsidian font-bold text-sm shadow-cyan-glow hover:brightness-105 transition-all">Submit Hiring Request &rarr;</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- JOB DETAIL MODAL -->
+  <div id="jobDetailModal" class="fixed inset-0 z-50 hidden bg-obsidian/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div id="jobModalContent" class="glass-card rounded-3xl w-full max-w-2xl p-6 sm:p-8 space-y-6 border-royalPurple/30 relative max-h-[90vh] overflow-y-auto"></div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 hidden glass-card border-electricCyan/50 px-6 py-4 rounded-2xl shadow-cyan-glow flex items-center gap-3">
+    <i class="fa-solid fa-circle-check text-electricCyan text-xl"></i>
+    <div>
+      <h4 id="toastTitle" class="text-sm font-bold text-white">Request Received</h4>
+      <p id="toastMessage" class="text-xs text-mutedSilver">Our technical talent team will reach out shortly.</p>
+    </div>
+  </div>
+
+  <script>
+    const jobsData = [
+      { id: 1, title: "Principal Cloud Solutions Architect", category: "Cloud & Infrastructure", engagement: "Full-Time", location: "New York, NY (Hybrid)", rate: "$195,000 - $225,000 / yr", skills: ["AWS", "Kubernetes", "Terraform", "Zero-Trust"], description: "Lead enterprise cloud modernization for Global Fortune 500 financial clients. Architect resilient multi-cloud infrastructures with high-availability targets." },
+      { id: 2, title: "Senior AI / LLM Infrastructure Engineer", category: "Data & AI", engagement: "Contract", location: "100% Remote (US)", rate: "$110 - $140 / hr", skills: ["PyTorch", "vLLM", "CUDA", "Python", "Ray"], description: "Deploy scalable inference pipelines and fine-tune open-weights models for enterprise conversational AI workflows." },
+      { id: 3, title: "Lead Cyber Defense Officer (SecOps)", category: "Cybersecurity", engagement: "Full-Time", location: "Austin, TX (Onsite)", rate: "$180,000 - $210,000 / yr", skills: ["SIEM", "CrowdStrike", "Threat Hunting", "Incident Response"], description: "Direct threat mitigation, incident response, and continuous SOC operations across global enterprise endpoints." },
+      { id: 4, title: "Full Stack React & Node Tech Lead", category: "Software Engineering", engagement: "Contract", location: "Remote (Global)", rate: "$95 - $120 / hr", skills: ["React", "TypeScript", "Node.js", "GraphQL", "PostgreSQL"], description: "Architect high-performance dashboard interfaces and microservices for modern enterprise workflow suites." },
+      { id: 5, title: "Senior DevOps & Platform Engineer", category: "Cloud & Infrastructure", engagement: "Full-Time", location: "London, UK (Hybrid)", rate: "£110,000 - £135,000 / yr", skills: ["Docker", "GitOps", "ArgoCD", "Prometheus"], description: "Build developer platforms and automated CI/CD pipelines to streamline deployment velocity across 40+ engineering pods." },
+      { id: 6, title: "Enterprise Data Platform Architect", category: "Data & AI", engagement: "Contract", location: "100% Remote (US)", rate: "$105 - $130 / hr", skills: ["Snowflake", "dbt", "Databricks", "Spark"], description: "Design real-time data ingestion pipelines and unified warehouse architectures for high-volume analytics teams." }
+    ];
+
+    function renderJobs(jobs) {
+      const container = document.getElementById('jobListingsGrid');
+      container.innerHTML = '';
+
+      if (jobs.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full text-center py-12 glass-card rounded-2xl">
+            <i class="fa-solid fa-folder-open text-mutedSilver text-3xl mb-3"></i>
+            <p class="text-sm text-mutedSilver">No positions match your search filters.</p>
+          </div>`;
+        return;
+      }
+
+      jobs.forEach(job => {
+        const card = document.createElement('div');
+        card.className = 'glass-card glass-card-hover rounded-2xl p-6 flex flex-col justify-between space-y-4';
+        const badgeColor = job.engagement === 'Contract'
+          ? 'bg-electricCyan/10 border-electricCyan/30 text-electricCyan'
+          : 'bg-royalPurple/10 border-royalPurple/30 text-royalPurple';
+
+        card.innerHTML = `
+          <div class="space-y-3">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[10px] uppercase font-semibold tracking-wider px-2.5 py-1 rounded-full border ${badgeColor}">${job.engagement}</span>
+              <span class="text-xs text-mutedSilver font-mono">${job.rate}</span>
+            </div>
+            <h3 class="font-bold text-white text-lg leading-snug">${job.title}</h3>
+            <div class="flex items-center gap-2 text-sm text-mutedSilver">
+              <i class="fa-solid fa-location-dot text-electricCyan"></i><span>${job.location}</span>
+            </div>
+            <p class="text-sm text-mutedSilver line-clamp-2 leading-relaxed">${job.description}</p>
+          </div>
+          <div class="space-y-4 pt-2 border-t border-white/10">
+            <div class="flex flex-wrap gap-1.5">
+              ${job.skills.map(skill => `<span class="text-[11px] px-2 py-0.5 rounded bg-white/5 text-mutedSilver">${skill}</span>`).join('')}
+            </div>
+            <button onclick="openJobDetailModal(${job.id})" class="w-full py-3 rounded-xl bg-white/5 hover:bg-electricCyan hover:text-obsidian text-white font-semibold text-sm border border-white/10 transition-all flex items-center justify-center gap-2">
+              <span>View Details & Apply</span><i class="fa-solid fa-arrow-right text-[10px]"></i>
+            </button>
+          </div>`;
+        container.appendChild(card);
+      });
+    }
+
+    function filterJobs() {
+      const searchTerm = document.getElementById('jobSearchInput').value.toLowerCase();
+      const category = document.getElementById('roleCategoryFilter').value;
+      const engagement = document.getElementById('engagementFilter').value;
+
+      const filtered = jobsData.filter(job => {
+        const matchesSearch = job.title.toLowerCase().includes(searchTerm) ||
+                              job.skills.some(s => s.toLowerCase().includes(searchTerm)) ||
+                              job.description.toLowerCase().includes(searchTerm);
+        const matchesCategory = category === 'All' || job.category === category;
+        const matchesEngagement = engagement === 'All' ||
+                                  (engagement === 'Remote' ? job.location.includes('Remote') : job.engagement === engagement);
+        return matchesSearch && matchesCategory && matchesEngagement;
+      });
+      renderJobs(filtered);
+    }
+
+    function setSkillFilter(keyword) {
+      document.getElementById('jobSearchInput').value = keyword;
+      filterJobs();
+      document.getElementById('jobs').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function toggleAudienceMode(mode) {
+      const empBtn = document.getElementById('modeEmployer');
+      const candBtn = document.getElementById('modeCandidate');
+      const active = 'px-3 py-1.5 rounded-full bg-grand-gradient text-obsidian font-bold transition-all';
+      const idle = 'px-3 py-1.5 rounded-full text-mutedSilver hover:text-white transition-all';
+
+      if (mode === 'employer') {
+        empBtn.className = active; candBtn.className = idle;
+        document.getElementById('heroBadge').textContent = 'Enterprise Staffing & Digital Execution';
+        document.getElementById('heroHeading').innerHTML = 'Architecting <span class="text-gradient">Next-Gen IT Teams</span> for Global Enterprises';
+        document.getElementById('heroSubtext').textContent = 'We deliver elite software engineers, AI architects, and cybersecurity specialists across contract, direct-hire, and managed service models.';
+      } else {
+        candBtn.className = active; empBtn.className = idle;
+        document.getElementById('heroBadge').textContent = 'Elite IT Career Opportunities';
+        document.getElementById('heroHeading').innerHTML = 'Connect With <span class="text-gradient">Top Global Tech Roles</span> & Enterprise Projects';
+        document.getElementById('heroSubtext').textContent = 'Access high-paying remote and hybrid technology positions with industry-leading firms, offering accelerated career growth.';
+      }
+    }
+
+    function openHiringModal(engagementType = 'Augmentation') {
+      document.getElementById('modalEngagementType').value = engagementType;
+      document.getElementById('hiringModal').classList.remove('hidden');
+    }
+    function closeHiringModal() { document.getElementById('hiringModal').classList.add('hidden'); }
+
+    function openJobDetailModal(jobId) {
+      const job = jobsData.find(j => j.id === jobId);
+      if (!job) return;
+
+      document.getElementById('jobModalContent').innerHTML = `
+        <button onclick="closeJobDetailModal()" aria-label="Close" class="absolute top-6 right-6 text-mutedSilver hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+        <div class="space-y-4">
+          <span class="eyebrow text-xs font-bold uppercase tracking-[0.28em] text-electricCyan">${job.category}</span>
+          <h2 class="text-2xl font-extrabold text-white pr-8">${job.title}</h2>
+          <div class="flex flex-wrap items-center gap-4 text-sm text-mutedSilver">
+            <span><i class="fa-solid fa-location-dot text-electricCyan mr-1"></i> ${job.location}</span>
+            <span><i class="fa-solid fa-briefcase text-royalPurple mr-1"></i> ${job.engagement}</span>
+            <span class="font-mono text-white"><i class="fa-solid fa-dollar-sign text-emerald-400 mr-1"></i> ${job.rate}</span>
+          </div>
+          <div class="p-4 rounded-xl bg-charcoal border border-white/10 text-sm text-mutedSilver leading-relaxed space-y-2">
+            <h4 class="font-bold text-white">Role Overview</h4>
+            <p>${job.description}</p>
+          </div>
+          <div class="space-y-2">
+            <h4 class="text-sm font-bold text-white">Required Skills & Capabilities</h4>
+            <div class="flex flex-wrap gap-2">
+              ${job.skills.map(s => `<span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-xs text-electricCyan">${s}</span>`).join('')}
+            </div>
+          </div>
+          <form onsubmit="submitJobApplication(event)" class="space-y-3 pt-4 border-t border-white/10">
+            <h4 class="text-sm font-bold text-white">Submit Quick Application</h4>
+            <div class="grid sm:grid-cols-2 gap-3">
+              <input type="text" required placeholder="Full Name" class="bg-charcoal border border-white/15 rounded-xl px-3 py-3 text-sm text-white placeholder-mutedSilver/70 focus:border-electricCyan">
+              <input type="email" required placeholder="Email Address" class="bg-charcoal border border-white/15 rounded-xl px-3 py-3 text-sm text-white placeholder-mutedSilver/70 focus:border-electricCyan">
+            </div>
+            <input type="text" placeholder="LinkedIn or Portfolio URL" class="w-full bg-charcoal border border-white/15 rounded-xl px-3 py-3 text-sm text-white placeholder-mutedSilver/70 focus:border-electricCyan">
+            <button type="submit" class="w-full py-3 rounded-xl bg-grand-gradient text-obsidian font-bold text-sm shadow-cyan-glow hover:brightness-105 transition-all">Apply For Position &rarr;</button>
+          </form>
+        </div>`;
+      document.getElementById('jobDetailModal').classList.remove('hidden');
+    }
+    function closeJobDetailModal() { document.getElementById('jobDetailModal').classList.add('hidden'); }
+
+    function submitHiringForm(e) {
+      e.preventDefault();
+      closeHiringModal();
+      showToast('Enterprise Request Submitted', 'Our technical account partner will deliver candidate matches within 24 hours.');
+      e.target.reset();
+    }
+    function submitJobApplication(e) {
+      e.preventDefault();
+      closeJobDetailModal();
+      showToast('Application Submitted', 'Your profile has been routed to our enterprise recruiting manager.');
+    }
+    function showToast(title, message) {
+      document.getElementById('toastTitle').textContent = title;
+      document.getElementById('toastMessage').textContent = message;
+      const toast = document.getElementById('toast');
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 4000);
+    }
+    function toggleMobileMenu() { document.getElementById('mobileMenu').classList.toggle('hidden'); }
+
+    // Close modals with Escape key
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { closeHiringModal(); closeJobDetailModal(); }
+    });
+
+    window.onload = function() { renderJobs(jobsData); };
+  </script>
+</body>
+</html>
